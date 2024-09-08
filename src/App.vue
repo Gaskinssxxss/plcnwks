@@ -1,26 +1,43 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center backdrop-blur-md z-50">
+    <loadingSpez @loadingComplete="onLoadingComplete" />
+  </div>
+  <div @mousemove="handleMouseMove" class="scale-100 md:scale-110">
+    <router-view :style="parallaxStyle" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import loadingSpez from './components/loadingSpez.vue';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
+    loadingSpez
+  },
+  data() {
+    return {
+      mouseX: 0,
+      mouseY: 0,
+      isLoading: true,
+    }
+  },
+  computed: {
+    parallaxStyle() {
+      const movementX = (this.mouseX - window.innerWidth / 2) / 20;
+      const movementY = (this.mouseY - window.innerHeight / 2) / 20;
+      return {
+        transform: `translate(${movementX}px, ${movementY}px)`
+      };
+    },
+  },
+  methods: {
+    onLoadingComplete() {
+      this.isLoading = false;
+    },
+    handleMouseMove(event) {
+      this.mouseX = event.clientX;
+      this.mouseY = event.clientY;
+    }
+  },
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
